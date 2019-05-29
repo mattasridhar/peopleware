@@ -1,0 +1,131 @@
+package com.peopleware.recruitingApp.controllers;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import com.peopleware.recruitingApp.models.JobsModel;
+import com.peopleware.recruitingApp.models.RequirementModel;
+import com.peopleware.recruitingApp.models.StatusModel;
+import com.peopleware.recruitingApp.services.IJobsService;
+
+
+@RestController
+@RequestMapping("api/company")
+@CrossOrigin(origins = "http://localhost:4500")
+public class CompanyController {
+	@Autowired
+	private IJobsService jobsService;
+
+	//testing the controller
+	@RequestMapping(method = RequestMethod.GET, value = "/hello")
+	public StatusModel getGreeting() {
+		System.out.println("API says Hello from CompanyController");
+		return new StatusModel("API says Hello from CompanyController");
+	}
+
+	//to Handle the Jobs
+	//get the list of all Jobs
+	@GetMapping("/jobs")
+	public ResponseEntity<List<JobsModel>> getAllJobs() {
+		List<JobsModel> jobs = jobsService.getAllJobs();
+		return new ResponseEntity<List<JobsModel>>(jobs, HttpStatus.OK);
+	}
+
+	//mappin to add a new Job
+	@RequestMapping(value = "/addjob", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	public ResponseEntity<StatusModel> addNewJob(@RequestBody JobsModel newJob, UriComponentsBuilder builder) {
+		
+		int jobId = jobsService.addJob(newJob);
+		if (jobId == -1) {
+			return new ResponseEntity<StatusModel>(new StatusModel("Job Already Exists."), HttpStatus.CONFLICT);
+		}
+		HttpHeaders headers = new HttpHeaders();
+		headers.setLocation(builder.path("/job/{id}").buildAndExpand(newJob.getId()).toUri());
+		return new ResponseEntity<StatusModel>(new StatusModel(Integer.toString(jobId)), HttpStatus.CREATED);
+	}
+
+	//mapping to get the Job info based on JobID
+	@GetMapping("jobId/{id}")
+	public ResponseEntity<JobsModel> getJobById(@PathVariable("id") String id) {
+		JobsModel job = jobsService.getJobById(Integer.parseInt(id));
+		if (job.getJobname() != null)
+			return new ResponseEntity<JobsModel>(job, HttpStatus.OK);
+		else
+			return new ResponseEntity<JobsModel>(job, HttpStatus.CONFLICT);
+	}
+	
+	//mapping to update an existing job
+	@PutMapping("updateJob")
+	public ResponseEntity<JobsModel> updateJob(@RequestBody JobsModel job) {
+		jobsService.updateJob(job);
+		return new ResponseEntity<JobsModel>(job, HttpStatus.OK);
+	}
+
+	//mapping to get all the Jobs based on companyname
+	@GetMapping("/jobsByCompany/{companyname}")
+	public ResponseEntity<List<JobsModel>> getJobsByCompany(@PathVariable("companyname") String companyname) {
+		List<JobsModel> jobs = jobsService.getJobsByCompany(companyname.toUpperCase());
+		return new ResponseEntity<List<JobsModel>>(jobs, HttpStatus.OK);
+	}
+	
+	//to Handle the Requirements for the Jobs
+	//mapping to get all the requirements list
+	@GetMapping("/reqs")
+	public ResponseEntity<List<RequirementModel>> getAllReqs() {
+		List<RequirementModel> reqs = jobsService.getAllReqs();
+		return new ResponseEntity<List<RequirementModel>>(reqs, HttpStatus.OK);
+	}
+
+	//mapping to add the job requirments and applicant's qualifications
+	@RequestMapping(value = "/addreq", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	public ResponseEntity<StatusModel> addNewJobReq(@RequestBody RequirementModel newReq, UriComponentsBuilder builder) {
+		boolean req = jobsService.addReq(newReq);
+		if (!req) {
+			return new ResponseEntity<StatusModel>(new StatusModel("Requirement Already Exists."), HttpStatus.CONFLICT);
+		}
+		HttpHeaders headers = new HttpHeaders();
+		headers.setLocation(builder.path("/req/{id}").buildAndExpand(newReq.getId()).toUri());
+		return new ResponseEntity<StatusModel>(new StatusModel("Requirement Added Successfully"), HttpStatus.CREATED);
+	}
+
+	//to get the requirement based on its ID
+	@GetMapping("reqId/{id}")
+	public ResponseEntity<List<RequirementModel>> getReqById(@PathVariable("id") String jobid) {
+		List<RequirementModel> reqs = jobsService.getReqById(Integer.parseInt(jobid));
+		
+		if (reqs.size() != 0)
+			return new ResponseEntity<List<RequirementModel>>(reqs, HttpStatus.OK);
+		else
+			return new ResponseEntity<List<RequirementModel>>(reqs, HttpStatus.OK);
+	}
+	
+	//mapping to update a job Requirement
+	@PutMapping("updateJobReq")
+	public ResponseEntity<RequirementModel> updateJobReq(@RequestBody RequirementModel req) {
+		jobsService.updateJobReq(req);
+		return new ResponseEntity<RequirementModel>(req, HttpStatus.OK);
+	}
+	
+	//maping to delete the requirement
+	@DeleteMapping("delReq/{id}")
+	public ResponseEntity<StatusModel> deleteArticle(@PathVariable("id") Integer id) {
+		System.out.println("SRI req path: " + id);
+		jobsService.deleteReq(id);
+		return new ResponseEntity<StatusModel>(new StatusModel("Requirement Deleted Successfully"), HttpStatus.OK);
+	}
+	
+}

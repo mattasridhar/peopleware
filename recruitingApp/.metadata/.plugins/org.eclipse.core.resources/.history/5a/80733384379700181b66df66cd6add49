@@ -1,0 +1,64 @@
+package com.peopleware.recruitingApp.models;
+
+public class UserModel {
+
+	private int id;
+	//private String product;
+	private String actualname;
+	private String username;
+	private String password;
+	private String role;
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	/*public void setProduct(String product) {
+		this.product = product;
+	}
+
+	public String getProduct() {
+		return product;
+	}*/
+
+	public String getActualname() {
+		//System.out.println("SRI sending actualName: " + actualname);
+		return actualname;
+	}
+	
+	public void setActualname(String actualname) {
+		this.actualname = actualname;
+		//System.out.println("SRI setting actualName: " + this.actualname + " sent Aname: " + actualname);
+	}
+
+	public String getUsername() {
+		//System.out.println("SRI sending userName: " + username);
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+		//System.out.println("SRI setting userName: " + this.username + " sent uname: " + username);
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+}

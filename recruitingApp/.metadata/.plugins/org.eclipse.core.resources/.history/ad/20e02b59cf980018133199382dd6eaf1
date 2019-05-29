@@ -1,0 +1,24 @@
+package com.peopleware.recruitingApp.services;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.peopleware.recruitingApp.dao.IApplicantsDAO;
+import com.peopleware.recruitingApp.models.ApplicantsModel;
+
+@Service
+public class SelectionService implements ISelectionService{
+
+	@Autowired
+	private IApplicantsDAO applDAO;
+	
+	@Override
+	public List<ApplicantsModel> getSelApplsByJobId(int jobid) {
+		
+		System.out.println("SRI Service jobid: " + jobid);
+		return null;
+	}
+
+}

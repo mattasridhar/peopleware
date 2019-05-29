@@ -1,0 +1,133 @@
+package com.peopleware.recruitingApp.controllers;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import com.peopleware.recruitingApp.models.JobsModel;
+import com.peopleware.recruitingApp.models.RequirementModel;
+import com.peopleware.recruitingApp.models.StatusModel;
+import com.peopleware.recruitingApp.services.IJobsService;
+
+
+@RestController
+@RequestMapping("api/company")
+@CrossOrigin(origins = "http://localhost:4500")
+public class CompanyController {
+	@Autowired
+	private IJobsService jobsService;
+
+	@RequestMapping(method = RequestMethod.GET, value = "/hello")
+	public StatusModel getGreeting() {
+		System.out.println("SRI greeting from Company Controller");
+
+		return new StatusModel("SRI says Hello Company");
+	}
+
+	//to Handle the Jobs
+	@GetMapping("/jobs")
+	public ResponseEntity<List<JobsModel>> getAllJobs() {
+		List<JobsModel> jobs = jobsService.getAllJobs();
+		return new ResponseEntity<List<JobsModel>>(jobs, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/addjob", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	public ResponseEntity<StatusModel> addNewJob(@RequestBody JobsModel newJob, UriComponentsBuilder builder) {
+		System.out.println(("SRI chk: "+ (newJob.getType() == "")));
+		
+		int jobId = jobsService.addJob(newJob);
+		if (jobId == -1) {
+			return new ResponseEntity<StatusModel>(new StatusModel("Job Already Exists."), HttpStatus.CONFLICT);
+		}
+		HttpHeaders headers = new HttpHeaders();
+		headers.setLocation(builder.path("/job/{id}").buildAndExpand(newJob.getId()).toUri());
+		return new ResponseEntity<StatusModel>(new StatusModel(Integer.toString(jobId)), HttpStatus.CREATED);
+	}
+
+	@GetMapping("jobId/{id}")
+	public ResponseEntity<JobsModel> getJobById(@PathVariable("id") String id) {
+		System.out.println("SRI jobs path: " + id);
+		JobsModel job = jobsService.getJobById(Integer.parseInt(id));
+		System.out.println("SRI obj: " + (job.getJobname() != null));
+		if (job.getJobname() != null)
+			return new ResponseEntity<JobsModel>(job, HttpStatus.OK);
+		else
+			return new ResponseEntity<JobsModel>(job, HttpStatus.CONFLICT);
+	}
+	
+	@PutMapping("updateJob")
+	public ResponseEntity<JobsModel> updateJob(@RequestBody JobsModel job) {
+		jobsService.updateJob(job);
+		return new ResponseEntity<JobsModel>(job, HttpStatus.OK);
+	}
+
+	//to Handle the Jobs
+	@GetMapping("/jobsByCompany/{companyname}")
+	public ResponseEntity<List<JobsModel>> getJobsByCompany(@PathVariable("companyname") String companyname) {
+		System.out.println("SRI company jobs path: " + companyname.toUpperCase());
+		List<JobsModel> jobs = jobsService.getJobsByCompany(companyname.toUpperCase());
+		return new ResponseEntity<List<JobsModel>>(jobs, HttpStatus.OK);
+	}
+	
+	//to Handle the Requirements for the Jobs
+	@GetMapping("/reqs")
+	public ResponseEntity<List<RequirementModel>> getAllReqs() {
+		List<RequirementModel> reqs = jobsService.getAllReqs();
+		return new ResponseEntity<List<RequirementModel>>(reqs, HttpStatus.OK);
+	}
+
+	@RequestMapping(value = "/addreq", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	public ResponseEntity<StatusModel> addNewJobReq(@RequestBody RequirementModel newReq, UriComponentsBuilder builder) {
+		// System.out.println("SRI newUser: " + newUser) ;
+		//System.out.println("SRI Controll fetch: " + newReq.getId());
+		
+		boolean req = jobsService.addReq(newReq);
+		if (!req) {
+			return new ResponseEntity<StatusModel>(new StatusModel("Requirement Already Exists."), HttpStatus.CONFLICT);
+		}
+		HttpHeaders headers = new HttpHeaders();
+		headers.setLocation(builder.path("/req/{id}").buildAndExpand(newReq.getId()).toUri());
+		return new ResponseEntity<StatusModel>(new StatusModel("Requirement Added Successfully"), HttpStatus.CREATED);
+	}
+
+	@GetMapping("reqId/{id}")
+	public ResponseEntity<List<RequirementModel>> getReqById(@PathVariable("id") String jobid) {
+		//System.out.println("SRI req path: " + jobid);
+		//RequirementModel req = jobsService.getReqById(Integer.parseInt(id));
+		List<RequirementModel> reqs = jobsService.getReqById(Integer.parseInt(jobid));
+		
+		//System.out.println("SRI obj: " + (reqs.size() != 0));
+		if (reqs.size() != 0)
+			return new ResponseEntity<List<RequirementModel>>(reqs, HttpStatus.OK);//return new ResponseEntity<RequirementModel>(req, HttpStatus.OK);
+		else
+			return new ResponseEntity<List<RequirementModel>>(reqs, HttpStatus.OK);//return new ResponseEntity<RequirementModel>(req, HttpStatus.CONFLICT);
+	}
+	
+	@PutMapping("updateJobReq")
+	public ResponseEntity<RequirementModel> updateJobReq(@RequestBody RequirementModel req) {
+		//System.out.println("SRI qualification: " + req.getQualification());
+		jobsService.updateJobReq(req);
+		return new ResponseEntity<RequirementModel>(req, HttpStatus.OK);
+	}
+	
+	@DeleteMapping("delReq/{id}")
+	public ResponseEntity<StatusModel> deleteArticle(@PathVariable("id") Integer id) {
+		System.out.println("SRI req path: " + id);
+		jobsService.deleteReq(id);
+		return new ResponseEntity<StatusModel>(new StatusModel("Requirement Deleted Successfully"), HttpStatus.OK);
+	}
+	
+}

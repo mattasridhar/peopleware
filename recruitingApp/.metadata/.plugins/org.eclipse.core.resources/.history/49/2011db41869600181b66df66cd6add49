@@ -1,0 +1,22 @@
+package com.peopleware.recruitingApp.services;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.peopleware.recruitingApp.dao.IItemDAO;
+import com.peopleware.recruitingApp.models.UserModel;
+
+@Service
+public class UserService implements IUserService{
+
+	@Autowired
+	private IItemDAO itemDAO;
+	@Override
+	public List<UserModel> getAllItemsService() {
+		// TODO Auto-generated method stub
+		return itemDAO.getAllItems();
+	}
+
+}

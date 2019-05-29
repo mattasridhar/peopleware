@@ -1,0 +1,68 @@
+package com.peopleware.recruitingApp.controllers;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import com.peopleware.recruitingApp.models.StatusModel;
+import com.peopleware.recruitingApp.models.UserModel;
+import com.peopleware.recruitingApp.services.IUserService;
+
+@RestController
+@RequestMapping("api/user")
+@CrossOrigin(origins = "http://localhost:4500")
+public class UserController {
+	@Autowired
+	private IUserService userService;
+
+	// testing user controller link
+	@RequestMapping(method = RequestMethod.GET, value = "/hello")
+	public StatusModel getGreeting() {
+		System.out.println("API says Hello from UserController");
+
+		return new StatusModel("API says Hello from UserController");
+	}
+
+	// mapping to get the list of all users.
+	@GetMapping("/users")
+	public ResponseEntity<List<UserModel>> getAllUsers() {
+		List<UserModel> list = userService.getAllUsersService();
+		return new ResponseEntity<List<UserModel>>(list, HttpStatus.OK);
+	}
+
+	// mappin to add a new User
+	@RequestMapping(value = "/adduser", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	public ResponseEntity<StatusModel> addNewUser(@RequestBody UserModel newUser, UriComponentsBuilder builder) {
+		boolean flag = userService.addNewUser(newUser);
+		if (flag == false) {
+			return new ResponseEntity<StatusModel>(new StatusModel("User Already Exists."), HttpStatus.CONFLICT);
+		}
+		HttpHeaders headers = new HttpHeaders();
+		headers.setLocation(builder.path("/user/{id}").buildAndExpand(newUser.getId()).toUri());
+		return new ResponseEntity<StatusModel>(new StatusModel("User Created Successfully. "), HttpStatus.CREATED);
+	}
+
+	//mapping to get the user based on ID
+	@GetMapping("userId/{id}")
+	public ResponseEntity<UserModel> getUserById(@PathVariable("id") String id) {
+		System.out.println("SRI path: " + id);
+		UserModel user = userService.getUserById(id);
+		System.out.println("SRI obj: " + (user.getPassword() != null));
+		if (user.getPassword() != null)
+			return new ResponseEntity<UserModel>(user, HttpStatus.OK);
+		else
+			return new ResponseEntity<UserModel>(user, HttpStatus.CONFLICT);
+	}
+
+}

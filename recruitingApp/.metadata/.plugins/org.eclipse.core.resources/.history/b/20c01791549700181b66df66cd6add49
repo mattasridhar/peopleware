@@ -1,0 +1,12 @@
+package com.peopleware.recruitingApp.services;
+
+import java.util.List;
+
+import com.peopleware.recruitingApp.models.JobsModel;
+
+public interface IJobsService {
+    List<JobsModel> getAllJobs();
+    JobsModel getJobById(int jobId);
+    int addJob(JobsModel job);
+
+}

@@ -1,0 +1,31 @@
+package com.peopleware.recruitingApp.dao;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.peopleware.recruitingApp.models.ItemModel;
+import com.peopleware.recruitingApp.models.ItemRowMapper;
+
+@Transactional
+@Repository
+public class ItemDAO implements IItemDAO {
+
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+
+	@Override
+	public List<ItemModel> getAllItems() {
+		// TODO Auto-generated method stub
+		String sql = "SELECT id, product FROM products";
+		// RowMapper<Article> rowMapper = new
+		// BeanPropertyRowMapper<Article>(Article.class);
+		RowMapper<ItemModel> rowMapper = new ItemRowMapper();
+		return this.jdbcTemplate.query(sql, rowMapper);
+	}
+
+}

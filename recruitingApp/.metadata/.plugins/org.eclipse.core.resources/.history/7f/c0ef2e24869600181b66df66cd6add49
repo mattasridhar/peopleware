@@ -1,0 +1,16 @@
+package com.peopleware.recruitingApp.models;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.springframework.jdbc.core.RowMapper;
+
+public class ItemRowMapper implements RowMapper<ItemModel> {
+	@Override
+	public ItemModel mapRow(ResultSet row, int rowNum) throws SQLException {
+		ItemModel item = new ItemModel();
+		item.setId(row.getInt("id"));
+		item.setProduct(row.getString("product"));
+		return item;
+	}
+} 

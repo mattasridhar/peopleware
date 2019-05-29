@@ -1,0 +1,58 @@
+package com.peopleware.recruitingApp.controllers;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import com.peopleware.recruitingApp.models.ApplicantsModel;
+import com.peopleware.recruitingApp.models.JobsModel;
+import com.peopleware.recruitingApp.models.StatusModel;
+import com.peopleware.recruitingApp.models.UserModel;
+import com.peopleware.recruitingApp.services.IApplicantsService;
+
+@RestController
+@RequestMapping("api/appl")
+@CrossOrigin(origins = "http://localhost:4500")
+public class ApplicantsController {
+
+	@Autowired
+	IApplicantsService applService;
+
+	// testing api call..
+	@RequestMapping(method = RequestMethod.GET, value = "/hello")
+	public StatusModel getGreeting() {
+		System.out.println("API says Hello from ApplicantsController");
+		return new StatusModel("API says Hello from ApplicantsController");
+	}
+
+	// mapping to get the list of all the available applicants
+	@GetMapping("/appls")
+	public ResponseEntity<List<ApplicantsModel>> getAllApplicants() {
+		List<ApplicantsModel> appls = applService.getAllApplicants();
+		return new ResponseEntity<List<ApplicantsModel>>(appls, HttpStatus.OK);
+	}
+
+	// mapping to add an Applicant
+	@RequestMapping(value = "/addappl", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	public ResponseEntity<StatusModel> addNewUser(@RequestBody ApplicantsModel newAppl, UriComponentsBuilder builder) {
+
+		int applid = applService.addApplicant(newAppl);
+		if (applid == -1) {
+			return new ResponseEntity<StatusModel>(new StatusModel("Applicant Already Exists."), HttpStatus.OK);
+		}
+		HttpHeaders headers = new HttpHeaders();
+		headers.setLocation(builder.path("/appl/{id}").buildAndExpand(newAppl.getId()).toUri());
+		return new ResponseEntity<StatusModel>(new StatusModel(Integer.toString(applid)), HttpStatus.CREATED);
+	}
+
+}

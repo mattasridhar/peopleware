@@ -1,0 +1,41 @@
+package com.peopleware.recruitingApp.services;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.peopleware.recruitingApp.dao.IJobsDAO;
+import com.peopleware.recruitingApp.models.JobsModel;
+
+public class JobsService implements IJobsService {
+
+	@Autowired
+	private IJobsDAO jobsDAO;
+	
+	@Override
+	public List<JobsModel> getAllJobs() {
+		// TODO Auto-generated method stub
+		return jobsDAO.getAllJobs();
+	}
+
+	/*@Override
+	public JobsModel getJobById(int jobId) {
+		JobsModel obj = jobsDAO.getJobById(jobId);
+		if(obj.getJobname() != null)
+			return obj;
+		else
+			return null;
+	}
+
+	@Override
+	public synchronized boolean addJob(JobsModel job) {
+		// TODO Auto-generated method stub
+		if (jobsDAO.jobExists(job.getJobname(), job.getCompanyname())) {
+			return false;
+		} else {
+			jobsDAO.addJob(job);
+			return true;
+		}
+	}*/
+
+}

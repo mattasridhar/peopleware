@@ -1,0 +1,13 @@
+package com.peopleware.recruitingApp.dao;
+
+import java.util.List;
+
+import com.peopleware.recruitingApp.models.UserModel;
+
+public interface IUserDAO {
+    List<UserModel> getAllUsers();
+    //UserModel getUsersById(int id);
+    void addUser(UserModel user);
+    boolean userExists(String username, String password);
+
+}

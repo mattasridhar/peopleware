@@ -1,0 +1,162 @@
+package com.peopleware.recruitingApp.services;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+
+import com.peopleware.recruitingApp.dao.IApplicantsDAO;
+import com.peopleware.recruitingApp.dao.IJobsDAO;
+import com.peopleware.recruitingApp.models.ApplicantsModel;
+import com.peopleware.recruitingApp.models.RequirementModel;
+
+@Service
+public class SelectionService implements ISelectionService {
+
+	@Autowired
+	private IApplicantsDAO applDAO;
+	@Autowired
+	private IJobsDAO jobsDAO;
+
+	private List<ApplicantsModel> allAppl;
+	private HashMap<Integer, Integer> storeTmp;
+	// store all in another List to pop those who fail criteria
+	List<ApplicantsModel> selectedAppl = new ArrayList<ApplicantsModel>();
+
+	@Override
+	public List<ApplicantsModel> getSelApplsByJobId(int jobid) {
+
+		allAppl = new ArrayList<>();
+		storeTmp = new HashMap<Integer, Integer>();//to store the validated  Applicant ids and their total scales
+		System.out.println("SRI Service jobid: " + jobid);
+		// fetching all applicants who applied for the job wid this jobid
+		allAppl = applDAO.getAllApplByJobId(jobid);
+		
+		// System.out.println("SRI cond1 obj: " + allAppl.isEmpty());
+		// System.out.println("SRI cond2 obj: " + ObjectUtils.isEmpty(allAppl));
+		if (allAppl.isEmpty() || ObjectUtils.isEmpty(allAppl)) {
+			// if no applicants have applied then return empty list.
+			System.out.println("SRI service null obj: " + allAppl);
+			List<ApplicantsModel> empty = new ArrayList<>();
+			return empty;
+		} else {
+
+			// get all requirements based on jobid
+			List<RequirementModel> jobReqs = jobsDAO.getReqById(jobid);
+			// System.out.println("SRI service Reqs size: "+ jobReqs.size());
+
+			// scan thru each applicant and start validating
+			Iterator<ApplicantsModel> applItr = allAppl.iterator();
+			while (applItr.hasNext()) {
+				int applid = applItr.next().getId();
+				// int jobid = applItr.next().getJobid();
+				System.out.println("\nSRI service applItr ID: " + applid);
+				// get all requirements based on applicant id, applid and jobid
+				List<RequirementModel> applReqs = jobsDAO.getReqByApplId(jobid, applid);
+				// System.out.println("SRI service ApplReqs size: "+ applReqs.size());
+
+				// iterate thru jobReqs and check if they r in applReqs? If not remove entry
+				// from allAppl list.
+				int totScale = compareForSkills(jobReqs, applReqs);
+				System.out.println("\nSRI service compSkills totScale: " + totScale + " Appl name: " + applid);
+				//if totScale is equal to zero then remove them as such applicants do not posses the skill set we require.
+				if(totScale == 0) {
+					applItr.remove();
+				}else {//add totalScale and applid to selAppplIds		
+					storeTmp.put(applid, totScale);
+				}
+			}
+			
+//			for(int i=0 ; i< allAppl.size(); i++) {
+//				System.out.println("\nSRI allAppl Item: " + allAppl.get(i));
+//			}
+			
+			
+			Map<Integer, Integer> forSort = sortByValues(storeTmp);
+			
+			ArrayList<Integer> keys = new ArrayList<Integer>(forSort.keySet());
+			for(int i = keys.size()-1; i>=0; i--) {
+				int key = keys.get(i);
+				//System.out.println("SRI key: " + key);
+				Iterator<ApplicantsModel> itr = allAppl.iterator();
+				int index = 0;
+				while(itr.hasNext()) {
+					int itrId = itr.next().getId();
+					if(key == itrId) {
+						//System.out.println("\nSRI Cond Item: " + allAppl.get(index));
+						selectedAppl.add(allAppl.get(index));
+					}
+					index++;
+				}
+				
+			}
+			return selectedAppl;
+		}
+
+	}
+
+	  private static HashMap sortByValues(Map<Integer, Integer> map) { 
+	       List list = new LinkedList(map.entrySet());
+	       // Defined Custom Comparator here
+	       Collections.sort(list, new Comparator() {
+	            public int compare(Object o1, Object o2) {
+	               return ((Comparable) ((Map.Entry) (o1)).getValue())
+	                  .compareTo(((Map.Entry) (o2)).getValue());
+	            }
+	       });
+
+	       // Here I am copying the sorted list in HashMap
+	       // using LinkedHashMap to preserve the insertion order
+	       HashMap sortedHashMap = new LinkedHashMap();
+	       for (Iterator it = list.iterator(); it.hasNext();) {
+	              Map.Entry entry = (Map.Entry) it.next();
+	              sortedHashMap.put(entry.getKey(), entry.getValue());
+	       } 
+	       return sortedHashMap;
+	  }
+
+	public int compareForSkills(List<RequirementModel> jobReqs, List<RequirementModel> applReqs) {
+
+		Iterator<RequirementModel> applReqItr = applReqs.iterator();
+		int index = 0;// need index to remove the entry from allAppl if validation fails
+		int totScale = 0;//to store the overall sum of all skill scales
+		
+		while (applReqItr.hasNext()) {
+			
+			String applSkill = applReqItr.next().getSkill();
+			if (applSkill != null && !applSkill.isEmpty()) { // skip if null
+				System.out.println("\nSRI appl Skill: " + applSkill);
+				Iterator<RequirementModel> jobReqItr = jobReqs.iterator();
+				
+				while (jobReqItr.hasNext()) {
+					String jobSkill = jobReqItr.next().getSkill();
+					if (jobSkill != null && !jobSkill.isEmpty()) {// skip if null
+						System.out.println("SRI job Skill: " + jobSkill);
+
+						if (jobSkill.equals(applSkill)) {
+							totScale = totScale + applReqs.get(index).getScale();
+							System.out.println("SRI Scale: " + applReqs.get(index).getScale() + " totalScale: " + totScale);
+						} else {
+							System.out.println("SRI Chk Cond: " + (jobSkill.equals(applSkill)));
+						}
+
+					}
+				}
+			}
+			index++;
+		}
+		return totScale;
+	}
+
+}

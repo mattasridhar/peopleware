@@ -1,0 +1,48 @@
+package com.peopleware.recruitingApp.services;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+
+import com.peopleware.recruitingApp.dao.IApplicantsDAO;
+import com.peopleware.recruitingApp.dao.IJobsDAO;
+import com.peopleware.recruitingApp.models.ApplicantsModel;
+import com.peopleware.recruitingApp.models.RequirementModel;
+
+@Service
+public class SelectionService implements ISelectionService{
+
+	@Autowired
+	private IApplicantsDAO applDAO;
+	@Autowired
+	private IJobsDAO jobsDAO;
+	
+	@Override
+	public List<ApplicantsModel> getSelApplsByJobId(int jobid) {
+		
+		System.out.println("SRI Service jobid: " + jobid);
+		//fetching all applicants who applied for the job wid this jobid
+		List<ApplicantsModel> allAppl = applDAO.getAllApplByJobId(jobid);
+		//System.out.println("SRI cond1 obj: " + allAppl.isEmpty());
+		//System.out.println("SRI cond2 obj: " + ObjectUtils.isEmpty(allAppl));
+		if(allAppl.isEmpty() || ObjectUtils.isEmpty(allAppl)) {
+			//if no applicants have applied then return empty list.
+			System.out.println("SRI service null obj: " + allAppl);
+			List<ApplicantsModel> empty = new ArrayList<>();
+			return empty;
+		}else {
+			//store all in another List to pop those who fail criteria
+			List<ApplicantsModel> selectedAppl = allAppl;
+			
+			//get all requirements based on jobid
+			List<RequirementModel> jobReqs = jobsDAO.getReqById(jobid);
+			System.out.println("SRI service Reqs size: "+ jobReqs.size());
+			return allAppl;
+		}
+		
+	}
+
+}

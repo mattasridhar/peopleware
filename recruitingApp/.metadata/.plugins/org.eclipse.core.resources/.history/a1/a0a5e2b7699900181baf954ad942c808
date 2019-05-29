@@ -1,0 +1,83 @@
+package com.peopleware.recruitingApp.dao;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.peopleware.recruitingApp.models.ApplicantsModel;
+import com.peopleware.recruitingApp.models.ApplicantsRowMapper;
+import com.peopleware.recruitingApp.models.JobsModel;
+import com.peopleware.recruitingApp.models.JobsRowMapper;
+
+@Transactional
+@Repository
+public class ApplicantsDAO implements IApplicantsDAO {
+
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+
+	// returns all the applicants from Db-applicants table
+	@Override
+	public List<ApplicantsModel> getAllApplicants() {
+		String sql = "SELECT * FROM applicants";
+		RowMapper<ApplicantsModel> rowMapper = new ApplicantsRowMapper();
+		return this.jdbcTemplate.query(sql, rowMapper);
+	}
+
+	// to insert an applicant into Db-applicants table
+	@Override
+	public int addApplicant(ApplicantsModel appl) {
+		// Insert applicant
+		String sql = "INSERT INTO applicants (id, fullname, email, contact, salary, jobid) values (?, ?, ?, ?, ?, ?)";
+		jdbcTemplate.update(sql, appl.getId(), appl.getFullname().toUpperCase(), appl.getEmail(), appl.getContact(),
+				appl.getSalary(), appl.getJobid());
+
+		// Get applicant id
+		sql = "SELECT id FROM applicants WHERE fullname = ? and jobid=?";
+		int applid = jdbcTemplate.queryForObject(sql, Integer.class, appl.getFullname().toUpperCase(), appl.getJobid());
+
+		// Set applicant id
+		appl.setId(applid);
+		return applid;
+
+	}
+
+	// needed while insert new applicant- to prevent duplication errors
+	@Override
+	public boolean applicantExists(String fullname, int jobid) {
+		String sql = "SELECT count(*) FROM applicants WHERE fullname = ? and jobid=?";
+		int count = jdbcTemplate.queryForObject(sql, Integer.class, fullname.toUpperCase(), jobid);
+		if (count == 0) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	// returns list of all applicants who have applied for the job-jobid
+	@Override
+	public List<ApplicantsModel> getAllApplByJobId(int jobid) {
+		String sql = "";
+
+		sql = "SELECT count(*) FROM applicants WHERE jobid=?";
+		int count = jdbcTemplate.queryForObject(sql, Integer.class, jobid);
+
+		// return values only if it has entries
+		if (count > 0) {
+			sql = "SELECT count(*) FROM applicants WHERE jobid=?";
+			RowMapper<ApplicantsModel> rowMapper = new ApplicantsRowMapper();
+			return this.jdbcTemplate.query(sql, rowMapper);
+		} else {
+			List<ApplicantsModel> empty = new ArrayList<>();
+			return empty;
+		}
+
+	}
+
+}

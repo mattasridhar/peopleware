@@ -1,0 +1,5 @@
+package com.peopleware.recruitingApp.controllers;
+
+public class GreetingController {
+
+}

@@ -1,0 +1,80 @@
+package com.peopleware.recruitingApp.services;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.peopleware.recruitingApp.dao.IJobsDAO;
+import com.peopleware.recruitingApp.models.JobsModel;
+import com.peopleware.recruitingApp.models.RequirementModel;
+
+@Service
+public class JobsService implements IJobsService {
+
+	@Autowired
+	private IJobsDAO jobsDAO;
+	
+	//to Handle Job Actions
+	@Override
+	public List<JobsModel> getAllJobs() {
+		// TODO Auto-generated method stub
+		return jobsDAO.getAllJobs();
+	}
+
+	@Override
+	public JobsModel getJobById(int jobId) {
+		JobsModel obj = jobsDAO.getJobById(jobId);
+		if(obj.getJobname() != null)
+			return obj;
+		else
+			return null;
+	}
+
+	@Override
+	public synchronized int addJob(JobsModel job) {
+		// TODO Auto-generated method stub
+		if (jobsDAO.jobExists(job.getJobname(), job.getId())) {
+			return 0;
+		} else {
+			int jobId = jobsDAO.addJob(job);
+			return jobId;
+		}
+	}
+
+	//to Handle Requirement Actions
+	@Override
+	public List<RequirementModel> getAllReqs() {
+		// TODO Auto-generated method stub
+		return jobsDAO.getAllReqs();
+	}
+
+	@Override
+	public RequirementModel getReqById(int jobId) {
+		RequirementModel obj = jobsDAO.getReqById(jobId);
+		if(obj.getId() != 0)
+			return obj;
+		else
+			return null;
+	}
+
+	@Override
+	public synchronized boolean addReq(RequirementModel req) {
+		// TODO Auto-generated method stub
+		if (jobsDAO.reqExists(req.getId(), req.getJobid())) {
+			return false;
+		} else {
+			System.out.println("SRI service fetch: " + req.getJobid());
+
+			// AutoIncreement ID for user
+			if (req.getApplid() == 0) {
+				int lastId = jobsDAO.getLastId();
+				System.out.println("SRI last ApplID: " + lastId);
+				req.setId(++lastId);
+				System.out.println("SRI next AppID: " + req.getId());
+			}
+			jobsDAO.addJobReq(req);
+			return true;
+		}
+	}
+}

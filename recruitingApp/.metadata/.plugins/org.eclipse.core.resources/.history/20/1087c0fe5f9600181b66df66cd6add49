@@ -1,0 +1,16 @@
+package com.peopleware.recruitingApp.dao;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.springframework.jdbc.core.RowMapper;
+
+public class ItemRowMapper implements RowMapper<ItemDAO> {
+	@Override
+	public ItemDAO mapRow(ResultSet row, int rowNum) throws SQLException {
+		ItemDAO item = new ItemDAO();
+		item.setId(row.getInt("id"));
+		item.setProduct(row.getString("product"));
+		return item;
+	}
+} 

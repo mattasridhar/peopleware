@@ -1,0 +1,55 @@
+package com.peopleware.recruitingApp.dao;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.peopleware.recruitingApp.models.ApplicantsModel;
+import com.peopleware.recruitingApp.models.ApplicantsRowMapper;
+
+@Transactional
+@Repository
+public class ApplicantsDAO implements IApplicantsDAO{
+
+	@Autowired
+    private JdbcTemplate jdbcTemplate;
+	
+	@Override
+	public List<ApplicantsModel> getAllApplicants() {
+		String sql = "SELECT * FROM applicants";
+		RowMapper<ApplicantsModel> rowMapper = new ApplicantsRowMapper();
+		return this.jdbcTemplate.query(sql, rowMapper);
+	}
+
+	@Override
+	public int addApplicant(ApplicantsModel appl) {
+		//Add applicant
+		String sql = "INSERT INTO applicants (id, fullname, email, contact, salary, jobid) values (?, ?, ?, ?, ?, ?)";
+		jdbcTemplate.update(sql, appl.getId(), appl.getFullname().toUpperCase(), appl.getEmail(), appl.getContact(), appl.getSalary(), appl.getJobid());
+		
+		//Fetch applicant id
+		sql = "SELECT id FROM applicants WHERE fullname = ? and jobid=?";
+		int applid = jdbcTemplate.queryForObject(sql, Integer.class, appl.getFullname().toUpperCase(), appl.getJobid());
+		
+		//Set applicant id 
+		appl.setId(applid);
+		return applid;
+
+	}
+
+	@Override
+	public boolean applicantExists(String fullname, int jobid) {
+		String sql = "SELECT count(*) FROM applicants WHERE fullname = ? and jobid=?";
+		int count = jdbcTemplate.queryForObject(sql, Integer.class, fullname.toUpperCase(), jobid);
+		if(count == 0) {
+    		        return false;
+		} else {
+			return true;
+		}
+	}
+
+}

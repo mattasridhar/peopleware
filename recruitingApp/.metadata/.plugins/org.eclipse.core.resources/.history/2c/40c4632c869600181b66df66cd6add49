@@ -1,0 +1,24 @@
+package com.peopleware.recruitingApp.models;
+
+public class ItemModel {
+
+	private int id;
+	private String product;
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setProduct(String product) {
+		this.product = product;
+	}
+
+	public String getProduct() {
+		return product;
+	}
+
+}

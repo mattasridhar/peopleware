@@ -1,0 +1,10 @@
+package com.peopleware.recruitingApp.services;
+
+import java.util.List;
+
+import com.peopleware.recruitingApp.models.ItemModel;
+
+public interface IItemService {
+    List<ItemModel> getAllItemsService();
+
+}

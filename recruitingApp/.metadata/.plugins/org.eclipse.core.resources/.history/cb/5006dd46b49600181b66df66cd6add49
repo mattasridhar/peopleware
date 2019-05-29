@@ -1,0 +1,32 @@
+package com.peopleware.recruitingApp.services;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.peopleware.recruitingApp.dao.IUserDAO;
+import com.peopleware.recruitingApp.models.UserModel;
+
+@Service
+public class UserService implements IUserService{
+
+	@Autowired
+	private IUserDAO userDAO;
+	@Override
+	public List<UserModel> getAllUsersService() {
+		// TODO Auto-generated method stub
+		return userDAO.getAllUsers();
+	}
+	@Override
+	public boolean addUser(UserModel user) {
+		// TODO Auto-generated method stub
+        /*if (userDAO.articleExists(article.getTitle(), article.getCategory())) {
+          return false;
+        } else {*/
+          userDAO.addUser(user);
+          return true;
+        //}
+	}
+
+}

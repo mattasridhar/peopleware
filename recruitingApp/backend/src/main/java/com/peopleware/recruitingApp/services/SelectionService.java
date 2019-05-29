@@ -1,0 +1,145 @@
+package com.peopleware.recruitingApp.services;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
+
+import com.peopleware.recruitingApp.dao.IApplicantsDAO;
+import com.peopleware.recruitingApp.dao.IJobsDAO;
+import com.peopleware.recruitingApp.models.ApplicantsModel;
+import com.peopleware.recruitingApp.models.RequirementModel;
+
+@Service
+public class SelectionService implements ISelectionService {
+
+	@Autowired
+	private IApplicantsDAO applDAO;
+	@Autowired
+	private IJobsDAO jobsDAO;
+
+	// to store the list of all the applicants
+	private List<ApplicantsModel> allAppl;
+	// for temporarily storing the list of all applicant ids and their sum of scales
+	private HashMap<Integer, Integer> storeTmp;
+	// store all eligible applicants in sorted order
+	List<ApplicantsModel> selectedAppl = new ArrayList<ApplicantsModel>();
+
+	// returns the list of all the Eligible applicants
+	@Override
+	public List<ApplicantsModel> getSelApplsByJobId(int jobid) {
+
+		allAppl = new ArrayList<>();
+		storeTmp = new HashMap<Integer, Integer>();// to store the validated Applicant ids and their total scales
+		// fetching all applicants who applied for the job with this jobid
+		allAppl = applDAO.getAllApplByJobId(jobid);
+		selectedAppl = new ArrayList<ApplicantsModel>();
+		if (allAppl.isEmpty() || ObjectUtils.isEmpty(allAppl)) {
+			// if no applicants have applied then return empty list.
+			List<ApplicantsModel> empty = new ArrayList<>();
+			return empty;
+		} else {
+
+			// get all requirements based on jobid
+			List<RequirementModel> jobReqs = jobsDAO.getReqById(jobid);
+
+			// scan through each applicant and commence validating
+			Iterator<ApplicantsModel> applItr = allAppl.iterator();
+			while (applItr.hasNext()) {
+				int applid = applItr.next().getId();
+
+				// get all requirements based on applicant id, applid and jobid
+				List<RequirementModel> applReqs = jobsDAO.getReqByApplId(jobid, applid);
+
+				// iterate through jobReqs and check if they are in applReqs? If not, remove
+				// entry from allAppl list.
+				int totScale = compareForSkills(jobReqs, applReqs); // to store the sum of the scales for each applicant
+				// if totScale is equal to zero then remove them as such applicants do not
+				// qualify for the skill set we require.
+				if (totScale == 0) {
+					applItr.remove();
+				} else {// add totalScale and applid to storeTmp
+					storeTmp.put(applid, totScale);
+				}
+			}
+
+			Map<Integer, Integer> forSort = sortByValues(storeTmp);// sorting the storeTmp based on 'totScales' values
+
+			ArrayList<Integer> keys = new ArrayList<Integer>(forSort.keySet());
+			// iterate bottom-up and push the applicants into 'selectedAppl' list
+			for (int i = keys.size() - 1; i >= 0; i--) {
+				int key = keys.get(i);
+				Iterator<ApplicantsModel> itr = allAppl.iterator();
+				int index = 0;
+				while (itr.hasNext()) {
+					int itrId = itr.next().getId();
+					if (key == itrId) {
+						selectedAppl.add(allAppl.get(index));
+					}
+					index++;
+				}
+			}
+			return selectedAppl;
+		}
+	}
+
+	// go through each list and match the skills
+	public int compareForSkills(List<RequirementModel> jobReqs, List<RequirementModel> applReqs) {
+
+		Iterator<RequirementModel> applReqItr = applReqs.iterator();
+		int index = 0;// need index to remove the entry from allAppl if validation fails
+		int totScale = 0;// to store the overall sum of all skill scales
+
+		while (applReqItr.hasNext()) {
+
+			String applSkill = applReqItr.next().getSkill();
+			//check if applicant skill is needed for this job
+			if (applSkill != null && !applSkill.isEmpty()) { // skip if null
+				Iterator<RequirementModel> jobReqItr = jobReqs.iterator();
+
+				while (jobReqItr.hasNext()) {
+					String jobSkill = jobReqItr.next().getSkill();
+					if (jobSkill != null && !jobSkill.isEmpty()) {// skip if null
+						//add to totScale count only if match is found else ignore
+						if (jobSkill.equals(applSkill)) {
+							totScale = totScale + applReqs.get(index).getScale();
+						}
+					}
+				}
+			}
+			index++;
+		}
+		return totScale;
+	}
+
+	// to sort based on 'totScales' values
+	private static HashMap sortByValues(Map<Integer, Integer> map) {
+		List list = new LinkedList(map.entrySet());
+		// Defining local comparator to sort the list of entries in my map
+		Collections.sort(list, new Comparator() {
+			public int compare(Object o1, Object o2) {
+				return ((Comparable) ((Map.Entry) (o1)).getValue()).compareTo(((Map.Entry) (o2)).getValue());
+			}
+		});
+
+		// copying the sorted list using LinkedHashMap to preserve the insertion order
+		HashMap sortedHashMap = new LinkedHashMap();
+		for (Iterator it = list.iterator(); it.hasNext();) {
+			Map.Entry entry = (Map.Entry) it.next();
+			sortedHashMap.put(entry.getKey(), entry.getValue());
+		}
+		return sortedHashMap;
+	}
+
+}

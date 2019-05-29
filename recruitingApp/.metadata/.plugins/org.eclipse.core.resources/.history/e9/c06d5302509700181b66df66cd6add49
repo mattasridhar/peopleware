@@ -1,0 +1,5 @@
+package com.peopleware.recruitingApp.models;
+
+public class RequirementRowMapper {
+
+}

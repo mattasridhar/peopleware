@@ -1,0 +1,123 @@
+package com.peopleware.recruitingApp.services;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.peopleware.recruitingApp.dao.IJobsDAO;
+import com.peopleware.recruitingApp.models.JobsModel;
+import com.peopleware.recruitingApp.models.RequirementModel;
+
+@Service
+public class JobsService implements IJobsService {
+
+	@Autowired
+	private IJobsDAO jobsDAO;
+	
+	//to Handle Job Actions
+	@Override
+	public List<JobsModel> getAllJobs() {
+		// TODO Auto-generated method stub
+		return jobsDAO.getAllJobs();
+	}
+
+	@Override
+	public JobsModel getJobById(int jobId) {
+		JobsModel obj = jobsDAO.getJobById(jobId);
+		if(obj.getJobname() != null)
+			return obj;
+		else
+			return null;
+	}
+
+	@Override
+	public List<JobsModel> getJobsByCompany(String companyname) {
+		// TODO Auto-generated method stub
+		return jobsDAO.getJobsByCompany(companyname);
+	}
+
+	@Override
+	public synchronized int addJob(JobsModel job) {
+		// TODO Auto-generated method stub
+		if (jobsDAO.jobExists(job.getJobname(), job.getId())) {
+			/*
+			//if exists then return the existing job ID
+			JobsModel obj = jobsDAO.getJobById(job.getId());
+			return obj.getId();
+			 */
+			return 0;
+		} else {// AutoIncreement ID for user
+			if (job.getId() == 0) {
+				int lastId = jobsDAO.getLastJobId();
+				//System.out.println("SRI last ApplID: " + lastId);
+				job.setId(++lastId);
+				//System.out.println("SRI next AppID: " + req.getApplid());
+			}
+			int jobId = jobsDAO.addJob(job);
+			return jobId;
+		}
+	}
+	
+	@Override
+	public void updateJob(JobsModel job) {
+		jobsDAO.updateJob(job);
+	}
+
+	//to Handle Requirement Actions
+	@Override
+	public List<RequirementModel> getAllReqs() {
+		// TODO Auto-generated method stub
+		return jobsDAO.getAllReqs();
+	}
+
+	/*@Override
+	public RequirementModel getReqById(int jobId) {
+		RequirementModel obj = jobsDAO.getReqById(jobId);
+		if(obj.getId() != 0)
+			return obj;
+		else
+			return null;
+	}*/
+	@Override
+	public List<RequirementModel> getReqById(int jobId) {
+		System.out.println("SRI Service jobId type: " + jobId);
+		return jobsDAO.getReqById(jobId);
+	}
+
+	@Override
+	public synchronized boolean addReq(RequirementModel req) {
+		
+		if(req.getApplid() == 0 && req.getQualification() == "") {
+			System.out.println("SRI Qual AppID: " + req.getQualification());
+		}else if(req.getApplid() == 0 && req.getSkill() == "") {
+			System.out.println("SRI SKl AppID: " + req.getQualification());
+		}
+		if (jobsDAO.reqExists(req.getId(), req.getJobid())) {
+			return false;
+		} else {
+			//System.out.println("SRI service fetch: " + req.getJobid());
+
+			// AutoIncreement ID for user
+			if (req.getApplid() == 0) {
+				int lastId = jobsDAO.getLastId();
+				//System.out.println("SRI last ApplID: " + lastId);
+				req.setApplid(++lastId);
+				//System.out.println("SRI next AppID: " + req.getApplid());
+			}
+			jobsDAO.addJobReq(req);
+			return true;
+		}
+	}
+
+	@Override
+	public void updateJobReq(RequirementModel req) {
+		//System.out.println("SRI Serv qualification: " + req.getQualification());
+		jobsDAO.updateJobReq(req);
+	}
+
+	@Override
+	public void deleteReq(int id) {
+		jobsDAO.deleteReq(id);
+	}
+}

@@ -1,0 +1,19 @@
+package com.peopleware.recruitingApp.services;
+
+import java.util.List;
+
+import com.peopleware.recruitingApp.models.JobsModel;
+import com.peopleware.recruitingApp.models.RequirementModel;
+
+public interface IJobsService {
+	//to Handle Job actions
+    List<JobsModel> getAllJobs();
+    JobsModel getJobById(int jobId);
+    int addJob(JobsModel job);
+    
+    //to Handle Job Requirement actions
+    List<RequirementModel> getAllReqs();
+    RequirementModel getReqById(int jobId);
+    boolean addReq(RequirementModel req);
+
+}

@@ -1,0 +1,42 @@
+package com.peopleware.recruitingApp.services;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.peopleware.recruitingApp.dao.IUserDAO;
+import com.peopleware.recruitingApp.models.UserModel;
+
+@Service
+public class UserService implements IUserService{
+
+	@Autowired
+	private IUserDAO userDAO;
+	@Override
+	public List<UserModel> getAllUsersService() {
+		// TODO Auto-generated method stub
+		return userDAO.getAllUsers();
+	}
+	@Override
+	public synchronized boolean addUser(List<UserModel> user) {
+		// TODO Auto-generated method stub
+		UserModel newUser = new UserModel();
+        for(UserModel model : user) {
+            System.out.println(model.getUsername());
+            newUser.setId(model.getId());
+            newUser.setActualName(model.getActualName());
+            newUser.setUsername(model.getUsername());
+            newUser.setPassword(model.getPassword());
+            newUser.setRole(model.getRole());
+            System.out.println("SRI actual Name: " + newUser.getActualName());
+        }
+        if (userDAO.userExists(newUser.getUsername(), newUser.getPassword())) {
+          return false;
+        } else {
+          userDAO.addUser(newUser);
+          return true;
+        }
+	}
+
+}

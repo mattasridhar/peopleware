@@ -1,0 +1,5 @@
+package com.peopleware.recruitingApp.dao;
+
+public interface IApplicantsDAO {
+
+}

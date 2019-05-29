@@ -1,0 +1,191 @@
+package com.peopleware.recruitingApp.dao;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.peopleware.recruitingApp.models.JobsModel;
+import com.peopleware.recruitingApp.models.JobsRowMapper;
+import com.peopleware.recruitingApp.models.RequirementModel;
+import com.peopleware.recruitingApp.models.RequirementRowMapper;
+
+@Transactional
+@Repository
+public class JobsDAO implements IJobsDAO {
+
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+
+	// for Handling Job actions
+	@Override
+	public int addJob(JobsModel job) {
+		// Add article
+		String sql = "INSERT INTO jobs (id, companyname, jobname, description, salary, type) values (?, ?, ?, ?, ?, ?)";
+		jdbcTemplate.update(sql, job.getId(), job.getCompanyname().toUpperCase(), job.getJobname(), job.getDescription(),
+				job.getSalary(), job.getType());
+
+		// Fetch article id
+		sql = "SELECT count(*) FROM jobs WHERE companyname = ? and jobname=?";
+		int count = jdbcTemplate.queryForObject(sql, Integer.class, job.getCompanyname(), job.getJobname());
+		System.out.println("SRI count: " + count);
+		if (count == 1) {
+			sql = "SELECT id FROM jobs WHERE companyname = ? and jobname=?";
+			int jobId = jdbcTemplate.queryForObject(sql, Integer.class, job.getCompanyname(), job.getJobname());
+
+			// Set article id
+			job.setId(jobId);
+
+			return jobId;
+		} else {
+			return -1;
+		}
+
+	}
+
+	@Override
+	public List<JobsModel> getAllJobs() {
+		String sql = "SELECT * FROM jobs";
+		RowMapper<JobsModel> rowMapper = new JobsRowMapper();
+		return this.jdbcTemplate.query(sql, rowMapper);
+	}
+
+	@Override
+	public JobsModel getJobById(int jobId) {
+		String sql = "SELECT companyname, jobname, description, salary, type FROM jobs WHERE id=?";
+		RowMapper<JobsModel> rowMapper = new BeanPropertyRowMapper<JobsModel>(JobsModel.class);
+		JobsModel job = jdbcTemplate.queryForObject(sql, rowMapper, jobId);
+		if (job.getJobname() != null)
+			return job;
+		else
+			return null;
+	}
+
+	@Override
+	public List<JobsModel> getJobsByCompany(String companyname) {
+		String sql = "SELECT companyname, jobname, description, salary, type FROM jobs WHERE companyname="+companyname;
+		RowMapper<JobsModel> rowMapper = new JobsRowMapper();
+		return this.jdbcTemplate.query(sql, rowMapper);
+	}
+
+	@Override
+	public boolean jobExists(String jobname, int jobId) {
+		String sql = "SELECT count(*) FROM jobs WHERE id = ? and jobname=?";
+		int count = jdbcTemplate.queryForObject(sql, Integer.class, jobId, jobname);
+		if (count == 0) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	@Override
+	public int getLastJobId() {
+		String sql = "SELECT MAX(id) FROM jobs";
+		int count = jdbcTemplate.queryForObject(sql, Integer.class);
+		return count;
+
+	}
+	
+	@Override
+	public void updateJob(JobsModel job) {
+		String sql = "UPDATE jobs SET salary=?, type=? WHERE id=?";
+		jdbcTemplate.update(sql, job.getSalary(), job.getType(), job.getId());
+	}
+
+	// for Handling Requirement actions
+	@Override
+	public void addJobReq(RequirementModel req) {
+		// System.out.println("SRI DAO add: " + req.getJobid());
+
+		// Add article
+		String sql = "INSERT INTO requirements (id, jobid, applid, qualification, posses, skill, scale) values (?, ?, ?, ?, ?, ?, ?)";
+		jdbcTemplate.update(sql, req.getId(), req.getJobid(), req.getApplid(), req.getQualification(), req.getPosses(),
+				req.getSkill(), req.getScale());
+		// System.out.println("SRI DAO fetchId: " + req.getApplid());
+		// Fetch article id
+		sql = "SELECT count(*) FROM requirements WHERE applid = ? and jobid = ?";
+		int count = jdbcTemplate.queryForObject(sql, Integer.class, req.getApplid(), req.getJobid());
+		if (count == 1) {
+			sql = "SELECT id FROM requirements WHERE applid = ? and jobid = ?";
+			int reqId = jdbcTemplate.queryForObject(sql, Integer.class, req.getApplid(), req.getJobid());
+			// System.out.println("SRI DAO after fetch: " +
+			// reqId);//jdbcTemplate.queryForObject(sql, Integer.class, req.getJobid()));
+
+			// Set article id
+			req.setId(reqId);
+		}
+
+	}
+
+	@Override
+	public List<RequirementModel> getAllReqs() {
+		String sql = "SELECT * FROM requirements";
+		RowMapper<RequirementModel> rowMapper = new RequirementRowMapper();
+		return this.jdbcTemplate.query(sql, rowMapper);
+	}
+
+	/*@Override
+	public RequirementModel getReqById(int jobId) {
+		String sql = "SELECT id, qualification, skill FROM requirements WHERE jobid=?";
+		RowMapper<RequirementModel> rowMapper = new BeanPropertyRowMapper<RequirementModel>(RequirementModel.class);
+		RequirementModel job = jdbcTemplate.queryForObject(sql, rowMapper, jobId);
+		if (job.getId() != 0)
+			return job;
+		else
+			return null;
+	}*/
+
+	@Override
+	public List<RequirementModel> getReqById(int jobId) {
+		System.out.println("SRI DAO jobId type: " + jobId);
+		String sql = "SELECT * FROM requirements WHERE jobId="+jobId;
+		RowMapper<RequirementModel> rowMapper = new RequirementRowMapper();
+		return this.jdbcTemplate.query(sql, rowMapper);
+	}
+
+	@Override
+	public boolean reqExists(int id, int jobId) {
+		String sql = "SELECT count(*) FROM requirements WHERE id = ? and jobid=?";
+		int count = jdbcTemplate.queryForObject(sql, Integer.class, id, jobId);
+		if (count == 0) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	@Override
+	public int getLastId() {
+		String sql = "SELECT MAX(applid) FROM requirements";
+		int count = jdbcTemplate.queryForObject(sql, Integer.class);
+		return count;
+
+	}
+	
+	@Override
+	public void updateJobReq(RequirementModel req) {
+		
+		if(req.getQualification() != null) {
+			//System.out.println("SRI IF DAO qualification: " + req.getQualification() + " skill: " + req.getSkill());
+			String sql = "UPDATE requirements SET qualification=? WHERE jobid=?";
+			jdbcTemplate.update(sql, req.getQualification(), req.getJobid());
+		} else if(req.getSkill() != null) {
+			//System.out.println("SRI ELSE DAO qualification: " + req.getQualification() + " skill: " + req.getSkill());
+			String sql = "UPDATE requirements SET skill=?, scale=? WHERE jobid=? and id=?";
+			jdbcTemplate.update(sql, req.getSkill(), req.getScale(), req.getJobid(), req.getId());
+		}
+	}
+
+	@Override
+	public void deleteReq(int id) {
+		System.out.println("SRI DAO id: " + id);
+		String sql = "DELETE FROM requirements WHERE id=?";
+		jdbcTemplate.update(sql, id);
+	}
+
+}

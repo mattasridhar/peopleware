@@ -1,0 +1,5 @@
+package com.peopleware.recruitingApp.services;
+
+public class JobsService {
+
+}

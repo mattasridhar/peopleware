@@ -1,0 +1,13 @@
+package com.peopleware.recruitingApp.dao;
+
+import java.util.List;
+
+import com.peopleware.recruitingApp.models.JobsModel;
+
+public interface IJobsDAO {
+    void addJob(JobsModel job);
+    List<JobsModel> getAllJobs();
+    JobsModel getJobById(int jobId);
+	boolean jobExists(String jobname, String companyname);
+
+}

@@ -1,0 +1,34 @@
+package com.peopleware.recruitingApp.models;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.springframework.jdbc.core.RowMapper;
+
+public class RequirementRowMapper implements RowMapper<RequirementModel> {
+
+	
+	/*
+	 * `id` INT NOT NULL auto_increment,
+  `jobid` INT,
+  `applid` INT,
+  `qualification` VARCHAR(45), 
+  `posses` boolean,
+  `skill` VARCHAR(45),
+  `scale` INT,
+	 */
+	@Override
+	public RequirementModel mapRow(ResultSet row, int rowNum) throws SQLException {
+		RequirementModel reqs = new RequirementModel();
+		reqs.setId(row.getInt("id"));
+		reqs.setJobId(row.getInt("jobid"));
+		reqs.setApplId(row.getInt("applid"));
+		reqs.setQualification(row.getString("qualification"));
+		reqs.setPosses(row.getBoolean("posses"));
+		reqs.setSkill(row.getString("skill"));
+		reqs.setScale(row.getInt("scale"));
+		
+		return reqs;
+	}
+
+}
