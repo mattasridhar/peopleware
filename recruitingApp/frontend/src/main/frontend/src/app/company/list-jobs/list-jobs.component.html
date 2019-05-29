@@ -1,0 +1,46 @@
+<div class="container-title">
+  <h1>View All Potential Applicants
+    <button type="button" (click)="logout()" class="btn btn-warning" value="LOGOUT">LOGOUT</button>
+  </h1>
+</div>
+<div class="container">
+
+
+  <div class="container-list">
+
+    <div class="form-group" *ngIf="isDataAvailable">
+
+      <label class="col-form-label">Select the Posted JOB from the List of all Posted JOBS</label>
+      <select class="form-control" name="selectedJob" [(ngModel)]="jobs" required (change)="valueChange()">
+        <option *ngFor="let selectedJob of dispJobs" [ngValue]="selectedJob"> {{selectedJob.jobname}} </option>
+      </select>
+    </div>
+    <input type="button" (click)="back()" class="btn btn-outline-warning" value="Back To Dashboard">
+
+  </div>
+  <div class="container-content">
+    <div class="card border-secondary mb-3" *ngIf="hasApplicants">
+      <div class="card-header">Eligible Applicants.</div>
+      <small id="smallText" class="form-text text-muted"> Applicants are sorting in decreasing order of their aggregated Scales of skills.</small>
+      <div class="card-body-out" *ngFor="let entry of appls">
+        <!-- <h4 class="card-title">Secondary card title</h4>
+          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p> -->
+        <div class="card bg-light mb-3">
+          <div class="card-body">
+            <h4 class="card-title">{{entry.fullname}}</h4>
+            <p class="card-text">Email: &nbsp;&nbsp;{{entry.email}} &nbsp;&nbsp; &nbsp;&nbsp;Contact: &nbsp;&nbsp;{{entry.contact}}</p>
+            <span class="card-text">Expected Salary: &nbsp;&nbsp;{{entry.salary}}</span>
+            <p class="card-text"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="alert alert-dismissible alert-danger" *ngIf="isEmpty">
+    <button type="button" class="close" data-dismiss="alert" (click)="warnClose()">&times;</button>
+    <a href="/compDashboard" class="alert-link">{{message}}</a>
+  </div>
+</div>

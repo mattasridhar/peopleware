@@ -1,0 +1,6 @@
+.radioDiv{
+    align-content: center;
+}
+:host .form-check-label{
+    padding-right: 30px;
+}

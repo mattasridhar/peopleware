@@ -1,0 +1,37 @@
+.container{
+    padding: 10px;
+}
+
+.jobs{
+    overflow: auto;
+    height: 350px;
+}
+
+:host .form-check-label{
+    padding-right: 120px;
+}
+
+:host .container-content{
+    width: 75%;
+    padding-left: 250px;
+}
+
+select, option {
+    display: flex;
+    text-align:right;   
+}
+
+div.container-title {
+    position: relative;
+}
+
+div h1 {
+    text-align: left;
+    padding-left: 150px; 
+}
+
+div button {
+    position: absolute;
+    right: 10px;
+    top: 5px;
+}

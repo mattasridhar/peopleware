@@ -1,0 +1,39 @@
+<div class="container" *ngIf="isDataAvailable">
+
+  <div class="jumbotron">
+    <h2 class="display-3">{{job.jobname}}</h2>
+    <h6 class="display-9">COMPANY: {{job.companyname}}</h6>
+    <hr class="my-4">
+    <p class="lead">Job Description: </p>
+    <p class="card-text">
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {{job.description}}
+    </p>
+    <p class="lead">Salary: </p>
+    <p class="card-text">
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {{job.salary}}
+    </p>
+    <p class="lead">Job Type: </p>
+    <p class="card-text">
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {{job.type}}
+    </p>
+    <p class="lead">Academic Qualifications: </p>
+    <p class="card-text" *ngFor="let qual of degrees">
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {{qual}}
+    </p>
+    <p class="lead">Required Skills: </p>
+    <p class="card-text" *ngFor="let sk of skills">
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; {{sk}}
+    </p>
+    <p class="lead">
+      <button type="button" (click)="logout()" class="btn btn-warning" value="LOGOUT">LOGOUT</button>
+      <input type="button" class="btn btn-outline-warning btn-lg" (click)="back()" value="Back to Dashboard">
+      <input type="button" class="btn btn-success btn-lg" (click)="proceed()" value="Proceed and Apply">
+    </p>
+  </div>
+
+</div>
+
+<div class="alert alert-dismissible alert-danger" *ngIf="!isDataAvailable">
+  <button type="button" class="close" data-dismiss="alert" (click)="warnClose()">&times;</button>
+  <a href="/applDashboard" class="alert-link">{{message}}</a>
+</div>

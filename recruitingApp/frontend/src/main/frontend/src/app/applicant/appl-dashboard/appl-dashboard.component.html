@@ -1,0 +1,21 @@
+<div class="container-title">
+  <h1>Applicants Dashboard
+    <button type="button" (click)="logout()" class="btn btn-warning" value="LOGOUT">LOGOUT</button>
+  </h1>
+</div>
+
+<div class="container">
+
+  <div class="container-content">
+
+    <div class="form-group">
+
+      <label class="col-form-label">All Posted JOBS</label>
+      <select class="form-control" name="selectedJob" [(ngModel)]="jobs" required (change)="valueChange()">
+        <option *ngFor="let selectedJob of dispJobs" [ngValue]="selectedJob">
+          JOB TITLE: {{selectedJob.jobname}} &nbsp;&nbsp;&nbsp;&nbsp; COMPANY: {{selectedJob.companyname}}
+        </option>
+      </select>
+    </div>
+
+  </div>

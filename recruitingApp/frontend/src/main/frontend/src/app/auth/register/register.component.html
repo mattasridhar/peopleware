@@ -1,0 +1,93 @@
+<div class="container">
+
+  <form>
+
+    <input type="button" (click)="isCompanyBtn()" class="btn btn-primary btn-lg" value="Enroll COMPANY">
+    <input type="button" (click)="isApplicantBtn()" class="btn btn-primary btn-lg" value="Enroll APPLICANT">
+    <label class="form-label">None of the Fields can be EMPTY</label>
+
+
+    <div class="form-group">
+      <div class="form-group" *ngIf="isApplicant">
+        <label class="col-form-label">Fullname</label>
+        <input id="fullname" name="fullname" class="form-control" required minlength="4" [(ngModel)]="fullname" #fname="ngModel">
+        <!-- FIELD VALIDATOR -->
+        <div *ngIf="fname.invalid && (fname.dirty || fname.touched)" class="alert alert-danger">
+
+          <div *ngIf="fname.errors.required">
+            Full Name is required.
+          </div>
+          <div *ngIf="fname.errors.minlength">
+            Name must be at least 4 characters long.
+          </div>
+
+        </div>
+      </div>
+
+      <div class="form-group" *ngIf="isCompany">
+        <label class="col-form-label">Company Name</label>
+        <input type="text" id="companyName" name="companyName" class="form-control" required minlength="4" [(ngModel)]="companyName"
+          #cname="ngModel">
+        <!-- FIELD VALIDATOR -->
+        <div *ngIf="cname.invalid && (cname.dirty || cname.touched)" class="alert alert-danger">
+
+          <div *ngIf="cname.errors.required">
+            Company Name is required.
+          </div>
+          <div *ngIf="cname.errors.minlength">
+            Name must be at least 4 characters long.
+          </div>
+
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-form-label">Username</label>
+        <input type="text" id="username" name="username" class="form-control" required minlength="4" appForbiddenName="admin" [(ngModel)]="username"
+          #uname="ngModel">
+        <!-- FIELD VALIDATOR -->
+        <div *ngIf="uname.invalid && (uname.dirty || uname.touched)" class="alert alert-danger">
+
+          <div *ngIf="uname.errors.required">
+            Name is required.
+          </div>
+          <div *ngIf="uname.errors.minlength">
+            Name must be at least 4 characters long.
+          </div>
+          <div *ngIf="uname.errors.forbiddenName">
+            Name cannot be Admin.
+          </div>
+
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" class="form-control" [(ngModel)]='password' name="password" id="password" required minlength="6" placeholder="Password"
+          #pwd="ngModel">
+        <!-- FIELD VALIDATOR -->
+        <div *ngIf="pwd.invalid && (pwd.dirty || pwd.touched)" class="alert alert-danger">
+
+          <div *ngIf="pwd.errors.required">
+            Password is required.
+          </div>
+          <div *ngIf="pwd.errors.minlength">
+            Password must be at least 6 characters long.
+          </div>
+
+        </div>
+      </div>
+
+
+      <input type="button" (click)="enroll()" class="btn btn-success" value="ENROLL">
+      <input type="button" (click)="back()" class="btn btn-outline-warning" value="Back">
+
+    </div>
+  </form>
+</div>
+
+<div class="alert alert-dismissible alert-danger" *ngIf="isEmpty">
+  <button type="button" class="close" data-dismiss="alert" (click)="warnClose()">&times;</button>
+  <a href="/" class="alert-link">{{message}}</a>
+</div>
+

@@ -1,0 +1,53 @@
+:host .navbar {
+	box-shadow: 0 1px 8px 0 rgba(0, 0, 0, .2), 0 3px 4px 0
+		rgba(0, 0, 0, .14), 0 3px 3px -2px rgba(0, 0, 0, .12);
+	z-index: 1;
+	color: #777;
+	margin-bottom: 10px;
+}
+
+:host .fixed-nav{
+	width: 100%;
+	display: flex;
+    justify-content: space-between;
+}
+
+:host .navbar-header{
+	float: left;
+    width: 75%;
+}
+
+:host .navbar-brand{
+    height: 50px;
+}
+
+:host .navbar-logo{
+    height: 50px;
+}
+
+.footer {
+   position: fixed;
+   left: 0;
+   bottom: 0;
+   width: 100%;
+   background-color: rgb(241, 239, 239); 
+   color: rgb(0, 0, 0);
+   text-align: center;
+ }
+
+ .container {
+	 align-content: center;
+	 text-align: center;
+     overflow: auto;
+ }
+
+ .content-container {
+	 align-content: center;
+	 text-align: center;
+     overflow: auto;
+     padding-left: 250px;
+ }
+
+:host .btn-block{
+    width: 75%;
+}

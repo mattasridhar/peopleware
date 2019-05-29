@@ -1,0 +1,8 @@
+:host .form-check-label{
+    padding-right: 120px;
+}
+
+:host .container-content{
+    position: absolute;
+    padding-left: 40%; 
+}

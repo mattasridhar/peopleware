@@ -1,0 +1,51 @@
+<div class="container">
+  <form>
+    <div class="form-group">
+      <div class="form-group">
+          <label class="col-form-label">Username</label>
+          <input type="text" id="username" name="username" class="form-control" required minlength="4" appForbiddenName="admin" [(ngModel)]="username"
+            #uname="ngModel">
+          <!-- FIELD VALIDATOR -->
+          <div *ngIf="uname.invalid && (uname.dirty || uname.touched)" class="alert alert-danger">
+  
+            <div *ngIf="uname.errors.required">
+              Name is required.
+            </div>
+            <div *ngIf="uname.errors.minlength">
+              Name must be at least 4 characters long.
+            </div>
+            <div *ngIf="uname.errors.forbiddenName">
+              Name cannot be Admin.
+            </div>
+  
+          </div>
+        </div>
+
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" class="form-control" [(ngModel)]='password' name="password" id="password" required minlength="6" placeholder="Password"
+          #pwd="ngModel">
+        <!-- FIELD VALIDATOR -->
+        <div *ngIf="pwd.invalid && (pwd.dirty || pwd.touched)" class="alert alert-danger">
+
+          <div *ngIf="pwd.errors.required">
+            Password is required.
+          </div>
+          <div *ngIf="pwd.errors.minlength">
+            Password must be at least 6 characters long.
+          </div>
+
+        </div>
+      </div>
+
+      <input type="button" (click)="login()" class="btn btn-primary" value="Login">
+      <input type="button" (click)="back()" class="btn btn-outline-warning" value="Back">
+
+    </div>
+  </form>
+</div>
+
+<div class="alert alert-dismissible alert-danger" *ngIf="isEmpty">
+  <button type="button" (click)="warnClose()" class="close" data-dismiss="alert">&times;</button>
+  <a href="/register" class="alert-link">{{message}}</a>
+</div>
