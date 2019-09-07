@@ -1,85 +1,110 @@
 PEOPLE-WARE: RECRUITING WEBAPP
 
-TABLE OF CONTENTS
-	INTRODUCTION	
-	SPECIFICATIONS	
-	SOFTWARES REQUIRED	
-	SOURCE CODE	
-	INSTALLATION NOTES	
-	ABOUT THE APPLICATION	
-	CLASS DIAGRAMS	
+TABLE OF CONTENTS\
+	<pre> INTRODUCTION	</pre>
+	<pre> SPECIFICATIONS	</pre>
+	<pre> SOFTWARES REQUIRED	</pre>
+	<pre> SOURCE CODE	</pre>
+	<pre> INSTALLATION NOTES	</pre>
+	<pre> ABOUT THE APPLICATION	</pre>
+	<pre> CLASS DIAGRAMS	</pre>
 
 
-INTRODUCTION
+INTRODUCTION\
 	The company PEOPLE-WARE is dedicated to recruit personnel. They want to automate the selection process of candidates for the job offers requested by other companies (i.e. its clients). The selection should be based on the skills and academic degrees of the applicants. For this, it is needed to maintain the information of the applicants searching for a job and the job offers from the companies searching for candidates. 
 
-SPECIFICATIONS
-	When a company wants to subscribes to the PEOPLE-WARE web app, the following information is requested:
-		* Company name
-		* Username
-		* Password
-	When a company wants to post a job offer, the following information should be provided:
-		* Name and description of the job position: For example: “Software Developer” and “Java developer with insights in the latest trends of web development”
-		* Salary (in CAD)
-		* Working time: Full-time or Part-time
-		* Job Requirements:
-		Mandatory fields:
-		* Academic degree(s)
-		* Job offer must have at least one skill
-		* Technical skills, each with the minimum required level that is expressed with a scale from 1 to 5 (low to high). 
-	When an applicant subscribes to the PEOPLE-WARE web app, the following information is requested:
-		* Full name 
-		* Username 
-		* Password
-	When an applicant applies for a posted job, the following information is requested:
-		* Full name
-		* Email
-		* Contact Number
-		* Salary
-		* Mandatory fields:	Academic Degree(s) and Technical Skills
-	The web application should select the applicants that qualify for each job offer, based on
-the following rules:
-		* Display the eligible applicant(s) Full name, Email and Contact
-		* Salary within the salary range of the job offer 
-		* Mandatory fields:
-		* Academic Degree(s)
-		* Technical skills: defined using the scale (1-5). At least one skill must be specified 
+SPECIFICATIONS\
+	<pre>When a company wants to subscribes to the PEOPLE-WARE web app, the following information is requested:</pre>
+		<ul>
+		<li> Company name</li>
+		<li> Username</li>
+		<li> Password</li>
+		</ul>
+	<pre>When a company wants to post a job offer, the following information should be provided:</pre>
+	<ul>
+	<li> Name and description of the job position: For example: “Software Developer” and “Java developer with insights in the latest trends of web development”</li>
+	<li> Salary (in CAD)</li>
+	<li> Working time: Full-time or Part-time</li>
+	<li> Job Requirements:</li>
+	</ul>
+			<pre>Mandatory fields:</pre>
+		<ul>
+		<li> Academic degree(s)</li>
+		<li> Job offer must have at least one skill</li>
+		<li> Technical skills, each with the minimum required level that is expressed with a scale from 1 to 5 (low to high). </li>
+	</ul>
+	<pre>When an applicant subscribes to the PEOPLE-WARE web app, the following information is requested:</pre>
+		<ul>
+		<li> Full name</li>
+		<li> Username</li>
+		<li> Password</li>
+	</ul>
+	<pre>When an applicant applies for a posted job, the following information is requested:</pre>
+			<ul>
+				<li> Full name</li>
+				<li> Email</li>
+				<li> Contact Number</li>
+				<li> Salary</li>
+			</ul>
+			<pre> Mandatory fields:	Academic Degree(s) and Technical Skills</pre>
+	<pre>The web application should select the applicants that qualify for each job offer, based on the following rules:</pre>
+		<ul>
+			<li> Display the eligible applicant(s) Full name, Email and Contact</li>
+			<li> Salary within the salary range of the job offer </li>
+		</ul>
+			<pre> Mandatory fields:</pre>
+		<ul>
+			<li> Academic Degree(s)</li>
+			<li> Technical skills: defined using the scale (1-5). At least one skill must be specified </li>
+		</ul>
 		
-SOFTWARES REQUIRED
+SOFTWARES REQUIRED\
 	The software that are needed for the application to be edited or executed 
-* ‘backend’ --> Java and Spring Boot.
-* ‘frontend’ --> Angular (2/4/6), Node, Express, Bootstrap.
-* database --> MySQL.
+	<ul>
+	<li> ‘backend’ --> Java and Spring Boot.</li>
+	<li> ‘frontend’ --> Angular (2/4/6), Node, Express, Bootstrap.</li>
+	<li> database --> MySQL.</li>
+	</ul>
 
-SOURCE CODE
+SOURCE CODE\
 	The Source code for the application is in the ‘recruitingApp’ folder
-* ‘backend’ --> This folder has the source code for the API.
-* ‘frontend’ --> This folder has the source code for the Front User Interface.
-* ‘scripts’ --> This folder has a ‘recruitingAppScripts.sql’ file for the Database table creations.
+	<ul>
+	<li> ‘backend’ --> This folder has the source code for the API.</li>
+	<li>‘frontend’ --> This folder has the source code for the Front User Interface.</li>
+	<li> ‘scripts’ --> This folder has a ‘recruitingAppScripts.sql’ file for the Database table creations.</li>
+	</ul>
 
-INSTALLATION NOTES
+INSTALLATION NOTES\
 	All the execution of this application will be done via command prompt terminal
-A. Database 
-i. Open the SQL workbench and import the ‘recruitingApp_Scripts.sql’ file from the ‘scripts’ folder.
-ii. Edit the name of the Database if you wish. Run the script in your workbench terminal.
-iii. This will create a new Database by ‘localDb’ name with 4 tables namely ‘users’, ‘jobs’, ‘requirements’ and ‘applicants’.
+<ol type="A">
+	<li> Database </li>
+	<ol type="i">
+		<li> Open the SQL workbench and import the ‘recruitingApp_Scripts.sql’ file from the ‘scripts’ folder.</li>
+		<li> Edit the name of the Database if you wish. Run the script in your workbench terminal.</li>
+		<li> This will create a new Database by ‘localDb’ name with 4 tables namely ‘users’, ‘jobs’, ‘requirements’ and ‘applicants’.</li>
+	</ol>
+	<li> ‘backend’ </li>
+	<ol type="i">
+		<li>Import the project ‘recruitingApp’ into the IDE and open the ‘application.properties’ in the ‘com/java/resources/’ location.</li>
+		<ol type="a">
+		<li>Edit ‘spring.datasource.username’ and ‘spring.datasource.password’ attributes. If you have changed the name of the database then replace ‘localDb’ with the name of your database in ‘spring.datasource.url’ attribute. Then Save it. </li>
+		</ol>
+		<li>Open a terminal and navigate to the ‘recruitingApp’ folder using the command:	cd yourpath/recruitingApp</li>
+		<li>Once inside the ‘recruitingApp’ folder, run the command: mvn clean install</li>
+		<li>This will install all the required softwares. Then enter into the ‘backend’ folder using: cd backend</li>
+		<li> Then execute the command: mvn spring-boot:run</li>
+		<li>This will start the java files that possess the logic for the whole application to function.</li>
+		<li>The code listens on port 9090 by default. If you wish to change, then you can do it in the ‘application.properties’ file.</li>
+	</ol>
+<li> ‘frontend’ </li>
+	<ol type="i">
+		<li>Open another Terminal window and navigate into the ‘frontend’ folder using the command: cd yourpath/recruitingApp/src/main/frontend/</li>
+		<li>Then type npm start or yarn start to start the front end of the application.</li>
+		<li>The User Interface runs on port 4500 by Default. </li>
+	</ol>
+	</ol>
 
-B. ‘backend’ 
-i. Import the project ‘recruitingApp’ into the IDE and open the ‘application.properties’ in the ‘com/java/resources/’ location.
-a) Edit ‘spring.datasource.username’ and ‘spring.datasource.password’ attributes. If you have changed the name of the database then replace ‘localDb’ with the name of your database in ‘spring.datasource.url’ attribute. Then Save it. 
-ii. Open a terminal and navigate to the ‘recruitingApp’ folder using the command:	cd yourpath/recruitingApp/
-iii. Once inside the ‘recruitingApp’ folder, run the command: mvn clean install
-iv. This will install all the required softwares. Then enter into the ‘backend’ folder using: cd backend/
-v. Then execute the command: mvn spring-boot:run
-vi. This will start the java files that possess the logic for the whole application to function.
-vii. The code listens on port 9090 by default. If you wish to change, then you can do it in the ‘application.properties’ file.
-
-C. ‘frontend’ 
-i. Open another Terminal window and navigate into the ‘frontend’ folder using the command: cd yourpath/recruitingApp/src/main/frontend/
-ii. Then type npm start or yarn start to start the front end of the application.
-iii. The User Interface runs on port 4500 by Default. 
-
-ABOUT THE APPLICATION
+ABOUT THE APPLICATION\
 	This application can be accessed by visiting the url ‘http:localhost:4500/’ after you have installed and initiated the step given in the ‘INSTALLATION NOTES’ section.
 The application data cannot be preloaded as it makes use of the logged in Session user information to store and retrieve information from the database. The application begins at the page displayed in screen shown in Figure 1. 
 
@@ -104,10 +129,12 @@ Once the user is Validated then he is redirected to either the Company Dashboard
 
 	Figure 4:[From left to right] Job-Info Screen, Job-Apply Screen
 
-If the user was registered as being associated to a company then, there are three options to choose from (Figure 5)
-* SEE ALL THE APPLICANTS
-* POST A NEW JOB
-* EDIT AN EXISTING JOB
+<pre>If the user was registered as being associated to a company then, there are three options to choose from (Figure 5)</pre>
+	<ul>
+	<li>SEE ALL THE APPLICANTS</li>
+	<li>POST A NEW JOB</li>
+	<li>EDIT AN EXISTING JOB</li>
+	</ul>\
 The user can Post a new based on the conditions mentioned in the ‘REQUIREMENTS’ section. If all the conditions are met, then the Job is inserted into the database. To enter the skills and academic degrees, the user must first enter the values and press the ‘Return’/’ENTER’ key. This pushes the values into a box which will be added as qualifications for the job. 
 The main edit screen has a dropdown which gets populated with the list of all the jobs this user has posted. To edit an existing, the actions remain similar to that of posting a job but here the user cannot edit the Name and Description of the Job. Here when the user clicks on the ‘X’ button on the ‘Academic Degrees’ and ‘Skills’ boxes, it clears the entries and user can fill in new information again. This box will not be available unless one entry is made into it.
 
@@ -132,7 +159,7 @@ The Eligibility criteria is such that it rates the applicants based on the total
 
 When the User hits the LOGOUT button, all the session information is cleared, and the user is redirected to the Main screen (Figure 1).
 
-CLASS DIAGRAMS
+CLASS DIAGRAMS\
 	All the class diagrams are located in the ‘classDiagrams’ folder within the ‘recruitingApp’ folder. The class diagrams for User, Applicant, Company-Posting/Edit/Retrieval Jobs and Eligible Applicants are Figures 9 through 12 respectively.
 	
 ![](readme_images/fig9.png)	
