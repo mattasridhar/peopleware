@@ -75,7 +75,7 @@ vi. This will start the java files that possess the logic for the whole applicat
 vii. The code listens on port 9090 by default. If you wish to change, then you can do it in the ‘application.properties’ file.
 
 C. ‘frontend’ 
-i. Open another Terminal window and navigate into the ‘frontend’ folder using the command: cd yourpath/frontend/
+i. Open another Terminal window and navigate into the ‘frontend’ folder using the command: cd yourpath/recruitingApp/src/main/frontend/
 ii. Then type npm start or yarn start to start the front end of the application.
 iii. The User Interface runs on port 4500 by Default. 
 
