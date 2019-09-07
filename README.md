@@ -98,7 +98,7 @@ INSTALLATION NOTES\
 	</ol>
 <li> ‘frontend’ </li>
 	<ol type="i">
-		<li>Open another Terminal window and navigate into the ‘frontend’ folder using the command: cd yourpath/recruitingApp/src/main/frontend/</li>
+		<li>Open another Terminal window and navigate into the ‘frontend’ folder using the command: cd yourpath/recruitingApp/frontend/src/main/frontend/</li>
 		<li>Then type npm start or yarn start to start the front end of the application.</li>
 		<li>The User Interface runs on port 4500 by Default. </li>
 	</ol>
