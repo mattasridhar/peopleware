@@ -13,6 +13,9 @@ TABLE OF CONTENTS\
 INTRODUCTION\
 	The company PEOPLE-WARE is dedicated to recruit personnel. They want to automate the selection process of candidates for the job offers requested by other companies (i.e. its clients). The selection should be based on the skills and academic degrees of the applicants. For this, it is needed to maintain the information of the applicants searching for a job and the job offers from the companies searching for candidates. 
 
+<pre> Checkout the sample screens in a short snippet</pre>
+![](readme_images/peoplewareDemo.gif)
+
 SPECIFICATIONS\
 	<pre>When a company wants to subscribes to the PEOPLE-WARE web app, the following information is requested:</pre>
 		<ul>
